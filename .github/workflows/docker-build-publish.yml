@@ -1,0 +1,63 @@
+name: 'Build docker image and publish'
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+      - name: Build docker image
+        run: docker build ./ -t ${{IMAGE_NAME}} --file Dockerfile
+        
+      - name: Tag an image
+        run: docker tag ${{IMAGE_NAME}} ${{IMAGE_NAME}}:${{GITHUB_REF}}
+    env:
+      IMAGE_NAME: projectprimera/sandbox
+
+  dockle:
+    name: Dockle scan
+    runs-on: ubuntu-18.04
+    needs: [build]
+    steps:
+      - uses: actions/checkout@master
+      - name: Setting for dockle
+        run: |
+          export DOCKLE_LATEST=$(
+          curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
+          grep '"tag_name":' | \
+          sed -E 's/.*"v([^"]+)".*/\1/' \
+          )
+      - name: Check image with dockle
+        run: docker run --rm goodwithtech/dockle:v${DOCKLE_LATEST} ${{IMAGE_NAME}}:${{GITHUB_REF}}
+    env:
+      IMAGE_NAME: projectprimera/sandbox
+  # trivy:
+  #   name: Trivy scan vulnerability
+  #   runs-on: ubuntu-18.04
+  #   needs: [build]
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: Install trivy
+  #       run: |
+  #         sudo apt-get install apt-transport-https gnupg
+  #         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+  #         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+  #         sudo apt-get update
+  #         sudo apt-get install trivy
+  #     - name: Vulnerability scan with trivy
+  #       run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
+  #       env:
+  #         IMAGE_NAME: app
+
+      # - name: Slack Notification
+      #   uses: 8398a7/action-slack@v2
+      #   if: always()
+      #   with:
+      #     status: ${{ job.status }}
+      #     author_name: laravel-worker
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
