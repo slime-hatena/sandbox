@@ -14,9 +14,9 @@ jobs:
 
       - name: Tag an image
         run: |
-        TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-        docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
-        docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
     env:
       IMAGE_NAME: slime-hatena/sandbox
 
