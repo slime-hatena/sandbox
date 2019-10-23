@@ -13,7 +13,9 @@ jobs:
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
 
       - name: Tag an image
-        run: docker tag ${IMAGE_NAME} ${IMAGE_NAME}:$(sed -e 's/refs\/tags\//' ${GITHUB_REF})
+        run: |
+        TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+        docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
     env:
       IMAGE_NAME: slime-hatena/sandbox
 
