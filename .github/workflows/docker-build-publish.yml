@@ -16,6 +16,7 @@ jobs:
         run: |
         TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
         docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+        docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
     env:
       IMAGE_NAME: slime-hatena/sandbox
 
@@ -28,9 +29,9 @@ jobs:
       - name: Setting for dockle
         run: |
           export DOCKLE_LATEST=$(
-          curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
-          grep '"tag_name":' | \
-          sed -E 's/.*"v([^"]+)".*/\1/' \
+            curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
+            grep '"tag_name":' | \
+            sed -E 's/.*"v([^"]+)".*/\1/' \
           )
       - name: Check image with dockle
         run: docker run --rm goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}:${GITHUB_REF}
