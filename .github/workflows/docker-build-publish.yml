@@ -30,6 +30,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Check image with dockle
         run: |
+          DOCKLE_TIMEOUT_SEC=600s
           export DOCKLE_LATEST=$(
             curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
             grep '"tag_name":' | \
