@@ -10,14 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Build docker image
-        run: docker build ./ -t ${{IMAGE_NAME}} --file Dockerfile
-        env:
-          IMAGE_NAME: Slime-hatena/sandbox
+        run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
 
       - name: Tag an image
-        run: docker tag ${{IMAGE_NAME}} ${{IMAGE_NAME}}:${{GITHUB_REF}}
-        env:
-          IMAGE_NAME: Slime-hatena/sandbox
+        run: docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${GITHUB_REF}
+    env:
+      IMAGE_NAME: Slime-hatena/sandbox
 
   dockle:
     name: Dockle scan
@@ -33,9 +31,9 @@ jobs:
           sed -E 's/.*"v([^"]+)".*/\1/' \
           )
       - name: Check image with dockle
-        run: docker run --rm goodwithtech/dockle:v${DOCKLE_LATEST} ${{IMAGE_NAME}}:${{GITHUB_REF}}
-        env:
-          IMAGE_NAME: Slime-hatena/sandbox
+        run: docker run --rm goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}:${GITHUB_REF}
+    env:
+      IMAGE_NAME: Slime-hatena/sandbox
   # trivy:
   #   name: Trivy scan vulnerability
   #   runs-on: ubuntu-18.04
