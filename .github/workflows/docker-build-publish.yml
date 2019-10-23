@@ -14,6 +14,8 @@ jobs:
 
       - name: Tag an image
         run: docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${GITHUB_REF}
+    env:
+      IMAGE_NAME: slime-hatena/sandbox
 
   dockle:
     name: Dockle scan
@@ -30,8 +32,8 @@ jobs:
           )
       - name: Check image with dockle
         run: docker run --rm goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}:${GITHUB_REF}
-  env:
-    IMAGE_NAME: slime-hatena/sandbox
+    env:
+      IMAGE_NAME: slime-hatena/sandbox
   # trivy:
   #   name: Trivy scan vulnerability
   #   runs-on: ubuntu-18.04
