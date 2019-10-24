@@ -40,8 +40,8 @@ jobs:
           rm dockle.deb
       - name: Check image with dockle
         run: |
-        TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-        dockle ${IMAGE_NAME}:${TAG}
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          dockle ${IMAGE_NAME}:${TAG}
     env:
       IMAGE_NAME: slime-hatena/sandbox
   # trivy:
