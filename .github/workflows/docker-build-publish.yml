@@ -28,15 +28,20 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@master
-      - name: Check image with dockle
+      - name: Install dockle
         run: |
-          export DOCKLE_LATEST=$(
+          VERSION=$(
             curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
             grep '"tag_name":' | \
             sed -E 's/.*"v([^"]+)".*/\1/' \
           )
-          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}
+          curl -L -o dockle.deb https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.deb
+          sudo dpkg -i dockle.deb
+          rm dockle.deb
+      - name: Check image with dockle
+        run: |
+        TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+        dockle ${IMAGE_NAME}:${TAG}
     env:
       IMAGE_NAME: slime-hatena/sandbox
   # trivy:
