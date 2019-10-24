@@ -11,13 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - run: echo $GITHUB_SHA
-      - run: echo ${{github.ref}}
       - uses: actions/create-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: $GITHUB_SHA
+          release_name: Release $GITHUB_SHA
           draft: false
           prerelease: false
