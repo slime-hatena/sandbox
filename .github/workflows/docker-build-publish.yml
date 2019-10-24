@@ -7,7 +7,6 @@ jobs:
   dockle:
     name: Dockle scan
     runs-on: ubuntu-18.04
-    needs: [build]
     steps:
       - uses: actions/checkout@master
       - name: Build docker image
