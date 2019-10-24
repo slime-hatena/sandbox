@@ -1,73 +1,67 @@
-name: 'Build docker image and publish'
+name: "Build docker image and publish"
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
 
 jobs:
-  build:
-    name: Build image
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@master
-      - name: Build docker image
-        run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
+    build:
+        name: Build image
+        runs-on: ubuntu-18.04
+        steps:
+            - uses: actions/checkout@master
+            - name: Build docker image
+              run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
 
-      - name: Tag an image
-        run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
-      - name: (debug) dump image list
-        run: docker images
-    env:
-      IMAGE_NAME: slime-hatena/sandbox
+            - name: Tag an image
+              run: |
+                  TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+                  docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+                  docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
+            - name: (debug) dump image list
+              run: docker images
+        env:
+            IMAGE_NAME: slime-hatena/sandbox
 
-  dockle:
-    name: Dockle scan
-    runs-on: ubuntu-18.04
-    needs: [build]
-    steps:
-      - uses: actions/checkout@master
-      - name: Install dockle
-        run: |
-          VERSION=$(
-            curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
-            grep '"tag_name":' | \
-            sed -E 's/.*"v([^"]+)".*/\1/' \
-          )
-          curl -L -o dockle.deb https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.deb
-          sudo dpkg -i dockle.deb
-          rm dockle.deb
-      - name: Check image with dockle
-        run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          dockle ${IMAGE_NAME}:${TAG}
-    env:
-      IMAGE_NAME: slime-hatena/sandbox
-  # trivy:
-  #   name: Trivy scan vulnerability
-  #   runs-on: ubuntu-18.04
-  #   needs: [build]
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: Install trivy
-  #       run: |
-  #         sudo apt-get install apt-transport-https gnupg
-  #         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-  #         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-  #         sudo apt-get update
-  #         sudo apt-get install trivy
-  #     - name: Vulnerability scan with trivy
-  #       run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
-  #       env:
-  #         IMAGE_NAME: app
-
-      # - name: Slack Notification
-      #   uses: 8398a7/action-slack@v2
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }}
-      #     author_name: laravel-worker
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+    dockle:
+        name: Dockle scan
+        runs-on: ubuntu-18.04
+        needs: [build]
+        steps:
+            - uses: actions/checkout@master
+            - name: Check image with dockle
+              run: |
+                  DOCKLE_LATEST=$(
+                    curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
+                    grep '"tag_name":' | \
+                    sed -E 's/.*"v([^"]+)".*/\1/' \
+                  )
+                  TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+                  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}:${TAG}
+        env:
+            IMAGE_NAME: slime-hatena/sandbox
+    # trivy:
+    #   name: Trivy scan vulnerability
+    #   runs-on: ubuntu-18.04
+    #   needs: [build]
+    #   steps:
+    #     - uses: actions/checkout@master
+    #     - name: Install trivy
+    #       run: |
+    #         sudo apt-get install apt-transport-https gnupg
+    #         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+    #         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    #         sudo apt-get update
+    #         sudo apt-get install trivy
+    #     - name: Vulnerability scan with trivy
+    #       run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
+    #       env:
+    #         IMAGE_NAME: app
+    # - name: Slack Notification
+    #   uses: 8398a7/action-slack@v2
+    #   if: always()
+    #   with:
+    #     status: ${{ job.status }}
+    #     author_name: laravel-worker
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
