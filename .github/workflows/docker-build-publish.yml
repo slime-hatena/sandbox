@@ -8,17 +8,7 @@ jobs:
     name: Build image
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@master
-      - name: Build docker image
-        run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
 
-      - name: Tag an image
-        run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
-      - name: (debug) dump image list
-        run: docker images
     env:
       IMAGE_NAME: slime-hatena/sandbox
 
@@ -28,8 +18,13 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@master
-      - name: (debug) dump image list
-        run: docker images
+      - name: Build docker image
+        run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
+      - name: Tag an image
+        run: |
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: Check image with dockle
         run: |
           DOCKLE_LATEST=$(
