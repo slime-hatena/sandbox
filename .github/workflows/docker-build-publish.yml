@@ -4,14 +4,6 @@ on:
     types: [published]
 
 jobs:
-  build:
-    name: Build image
-    runs-on: ubuntu-18.04
-    steps:
-
-    env:
-      IMAGE_NAME: slime-hatena/sandbox
-
   dockle:
     name: Dockle scan
     runs-on: ubuntu-18.04
