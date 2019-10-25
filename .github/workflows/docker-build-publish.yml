@@ -27,9 +27,7 @@ jobs:
       - name: (debug) dump image list
         run: docker images
       - name: Check image with dockle
-        run: dockle node
-        env:
-          IMAGE_NAME: projectprimera/ongeki-score
+        run: dockle ${IMAGE_NAME}
     env:
       IMAGE_NAME: slime-hatena/sandbox
   # trivy:
