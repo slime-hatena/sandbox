@@ -12,7 +12,6 @@ jobs:
     name: Dockle scan
     runs-on: ubuntu-18.04
     steps:
-      - run: set -x
       - uses: actions/checkout@master
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
@@ -31,23 +30,24 @@ jobs:
         run: dockle ${IMAGE_NAME}
     env:
       IMAGE_NAME: slime-hatena/sandbox
-  # trivy:
-  #   name: Trivy scan vulnerability
-  #   runs-on: ubuntu-18.04
-  #   needs: [build]
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: Install trivy
-  #       run: |
-  #         sudo apt-get install apt-transport-https gnupg
-  #         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-  #         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-  #         sudo apt-get update
-  #         sudo apt-get install trivy
-  #     - name: Vulnerability scan with trivy
-  #       run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
-  #       env:
-  #         IMAGE_NAME: app
+  trivy:
+    name: Trivy scan
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+      - name: Build docker image
+        run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
+      - name: Install trivy
+        run: |
+          sudo apt-get install apt-transport-https gnupg
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
+      - name: Vulnerability scan with trivy
+        run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
+    env:
+      IMAGE_NAME: slime-hatena/sandbox
 
       # - name: Slack Notification
       #   uses: 8398a7/action-slack@v2
