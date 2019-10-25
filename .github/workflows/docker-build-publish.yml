@@ -12,6 +12,7 @@ jobs:
     name: Dockle scan
     runs-on: ubuntu-18.04
     steps:
+      - run: set -x
       - uses: actions/checkout@master
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
