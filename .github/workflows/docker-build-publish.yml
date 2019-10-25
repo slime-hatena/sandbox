@@ -27,7 +27,7 @@ jobs:
       - name: (debug) dump image list
         run: docker images
       - name: Check image with dockle
-        run: dockle ${IMAGE_NAME}
+        run: dockle node
         env:
           IMAGE_NAME: projectprimera/ongeki-score
     env:
