@@ -2,6 +2,10 @@ name: 'Build docker image and publish'
 on:
   release:
     types: [published]
+  # test
+  push:
+    branches:
+      - master
 
 jobs:
   dockle:
