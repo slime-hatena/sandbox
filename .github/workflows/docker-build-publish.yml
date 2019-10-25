@@ -11,11 +11,6 @@ jobs:
       - uses: actions/checkout@master
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
-      - name: Tag an image
-        run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: Check image with dockle
         run: |
           DOCKLE_LATEST=$(
@@ -24,7 +19,7 @@ jobs:
             sed -E 's/.*"v([^"]+)".*/\1/' \
           )
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}:${TAG}
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock goodwithtech/dockle:v${DOCKLE_LATEST} ${IMAGE_NAME}
     env:
       IMAGE_NAME: slime-hatena/sandbox
   # trivy:

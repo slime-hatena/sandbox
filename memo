@@ -1,0 +1,2 @@
+TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
