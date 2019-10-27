@@ -72,9 +72,7 @@ jobs:
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
       - name: Set tags
         run: |
-          BRUNCH=`git symbolic-ref --short HEAD`
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${BRUNCH}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
@@ -83,9 +81,7 @@ jobs:
         run: docker login --username ${{ secrets.DOCKER_HUB_USER }} --password ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Publish image
         run: |
-          BRUNCH=`git symbolic-ref --short HEAD`
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${BRUNCH}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: Slack Notification
