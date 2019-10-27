@@ -73,11 +73,13 @@ jobs:
       - uses: actions/checkout@master
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
-      - name: Set latest tag
+      - name: Set tags
         run: |
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
+      - name: (debug) dump image list
+        run: docker images
     env:
       IMAGE_NAME: slime-hatena/sandbox
   slack:
