@@ -28,6 +28,15 @@ jobs:
         run: docker images
       - name: Check image with dockle
         run: dockle ${IMAGE_NAME}
+      - run: hohohogegegege
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v2
+        if: cancelled() || failure()
+        with:
+          status: ${{ job.status }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
       IMAGE_NAME: slime-hatena/sandbox
   trivy:
@@ -46,7 +55,14 @@ jobs:
           sudo apt-get install trivy
       - name: Vulnerability scan with trivy
         run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
-      - run: asldkhasd
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v2
+        if: cancelled() || failure()
+        with:
+          status: ${{ job.status }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
       IMAGE_NAME: slime-hatena/sandbox
   slack:
