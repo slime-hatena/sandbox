@@ -46,6 +46,7 @@ jobs:
           sudo apt-get install trivy
       - name: Vulnerability scan with trivy
         run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
+      - run: asldkhasd
     env:
       IMAGE_NAME: slime-hatena/sandbox
   slack:
