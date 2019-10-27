@@ -75,7 +75,7 @@ jobs:
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
       - name: Set tags
         run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          TAG=`echo $GITHUB_REF | sed 's/refs\/heads\///g'`
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
