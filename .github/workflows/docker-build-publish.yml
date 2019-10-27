@@ -12,7 +12,6 @@ jobs:
     name: Dockle scan
     runs-on: ubuntu-18.04
     steps:
-      - run: asjhgasfjh
       - uses: actions/checkout@master
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
@@ -25,8 +24,6 @@ jobs:
           curl -L -o dockle.deb https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.deb
           sudo dpkg -i dockle.deb
           rm dockle.deb
-      - name: (debug) dump image list
-        run: docker images
       - name: Check image with dockle
         run: dockle ${IMAGE_NAME}
       - name: Slack Notification
@@ -67,6 +64,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+    env:
+      IMAGE_NAME: slime-hatena/sandbox
+  dockerhub:
+    name: Publish to Docker Hub
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+      - name: Build docker image
+        run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
+      - name: Set latest tag
+        run: |
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
     env:
       IMAGE_NAME: slime-hatena/sandbox
   slack:
