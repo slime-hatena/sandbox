@@ -2,10 +2,6 @@ name: 'Build docker image and publish'
 on:
   release:
     types: [published]
-  # test
-  push:
-    branches:
-      - master
 
 jobs:
   dockle:
@@ -76,7 +72,9 @@ jobs:
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
       - name: Set tags
         run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/heads\///g'`
+          BRUNCH=`git symbolic-ref --short HEAD`
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${BRUNCH}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
@@ -85,9 +83,11 @@ jobs:
         run: docker login --username ${{ secrets.DOCKER_HUB_USER }} --password ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Publish image
         run: |
-          TAG=`echo $GITHUB_REF | sed 's/refs\/heads\///g'`
-          docker push slimehatena/sandbox:${TAG}
-          docker push slimehatena/sandbox:latest
+          BRUNCH=`git symbolic-ref --short HEAD`
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${BRUNCH}
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
         if: cancelled() || failure()
