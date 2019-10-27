@@ -48,13 +48,16 @@ jobs:
         run: trivy --only-update alpine -q --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}
     env:
       IMAGE_NAME: slime-hatena/sandbox
-
-      # - name: Slack Notification
-      #   uses: 8398a7/action-slack@v2
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }}
-      #     author_name: laravel-worker
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+  slack:
+    name: Slack Notification
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v2
+        if: always()
+        with:
+          status: ${{ job.status }}
+          author_name: laravel-worker
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
