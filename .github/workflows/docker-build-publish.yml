@@ -37,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
-      IMAGE_NAME: slime-hatena/sandbox
+      IMAGE_NAME: slimehatena/sandbox
   trivy:
     name: Trivy scan
     runs-on: ubuntu-18.04
@@ -65,10 +65,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
-      IMAGE_NAME: slime-hatena/sandbox
-  dockerhub:
+      IMAGE_NAME: slimehatena/sandbox
+  docker_hub:
     name: Publish to Docker Hub
     runs-on: ubuntu-18.04
+    needs: [dockle, trivy]
     steps:
       - uses: actions/checkout@master
       - name: Build docker image
@@ -80,12 +81,29 @@ jobs:
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
         run: docker images
+      - name: Login to Docker Hub
+        run: docker login --username ${{ secrets.DOCKER_HUB_USER }} --password ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Publish image
+        run: |
+          TAG=`echo $GITHUB_REF | sed 's/refs\/heads\///g'`
+          docker push slimehatena/sandbox:${TAG}
+          docker push slimehatena/sandbox:latest
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v2
+        if: cancelled() || failure()
+        with:
+          status: ${{ job.status }}
+          author_name: Slime-hatena/sandbox
+          text: <!channel>
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
-      IMAGE_NAME: slime-hatena/sandbox
+      IMAGE_NAME: slimehatena/sandbox
   slack:
     name: Slack Notification
     runs-on: ubuntu-18.04
-    needs: [dockle, trivy]
+    needs: [dockle, trivy, docker_hub]
     steps:
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
