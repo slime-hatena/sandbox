@@ -107,7 +107,8 @@ jobs:
   slack:
     name: Slack Notification
     runs-on: ubuntu-18.04
-    needs: [dockle, trivy, docker_hub]
+    # needs: [dockle, trivy, docker_hub]
+    needs: [docker_hub]
     steps:
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
