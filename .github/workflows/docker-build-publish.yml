@@ -75,7 +75,7 @@ jobs:
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
       - name: Set latest tag
-        if: !github.event.release.prerelease
+        if: github.event.release.prerelease == false
         run: |
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
@@ -87,7 +87,7 @@ jobs:
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker push ${IMAGE_NAME}:${TAG}
       - name: Publish latest tag image
-        if: !github.event.release.prerelease
+        if: github.event.release.prerelease == false
         run: |
           docker push ${IMAGE_NAME}:latest
       - name: Slack Notification
