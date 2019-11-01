@@ -68,8 +68,6 @@ jobs:
     # needs: [dockle, trivy]
     steps:
       - uses: actions/checkout@master
-      - run: echo ${{github.event.release.prerelease}}
-      - run: echo ${{github.event.action}}
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
       - name: Set version tag
@@ -77,7 +75,7 @@ jobs:
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
       - name: Set latest tag
-        if: github.event.action != 'prereleased'
+        if: !github.event.release.prerelease
         run: |
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
@@ -89,7 +87,7 @@ jobs:
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker push ${IMAGE_NAME}:${TAG}
       - name: Publish latest tag image
-        if: github.event.action != 'prereleased'
+        if: !github.event.release.prerelease
         run: |
           docker push ${IMAGE_NAME}:latest
       - name: Slack Notification
