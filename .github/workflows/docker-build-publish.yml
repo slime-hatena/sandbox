@@ -70,19 +70,25 @@ jobs:
       - uses: actions/checkout@master
       - name: Build docker image
         run: docker build ./ -t ${IMAGE_NAME} --file Dockerfile
-      - name: Set tags
+      - name: Set version tag
         run: |
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
+      - name: Set latest tag
+        if: github.event.action != 'prereleased'
+        run: |
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
       - name: (debug) dump image list
         run: docker images | grep ${IMAGE_NAME}
       - name: Login to Docker Hub
         run: docker login --username slimehatena --password ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Publish image
+      - name: Publish version tag image
         run: |
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker push ${IMAGE_NAME}:${TAG}
+      - name: Publish latest tag image
+        if: github.event.action != 'prereleased'
+        run: |
           docker push ${IMAGE_NAME}:latest
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
