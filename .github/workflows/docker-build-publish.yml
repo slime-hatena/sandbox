@@ -97,17 +97,17 @@ jobs:
       - name: Publish pre-release tag pre-release
         if: github.event.release.prerelease == true
         run: docker push ${IMAGE_NAME}:pre-release
-      - name: Publish version tag image
+      - name: Publish version tag for GitHub Package Registry
         run: |
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
           docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME_FOR_GITHUB}:${TAG}
           docker push ${IMAGE_NAME_FOR_GITHUB}:${TAG}
-      - name: Publish latest tag image to GitHub Package Registry
+      - name: Publish latest tag for GitHub Package Registry
         if: github.event.release.prerelease == false
         run: |
           docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME_FOR_GITHUB}:latest
           docker push ${IMAGE_NAME}:latest
-      - name: Publish pre-release tag pre-release to GitHub Package Registry
+      - name: Publish pre-release tag for GitHub Package Registry
         if: github.event.release.prerelease == true
         run: |
           docker tag ${IMAGE_NAME}:pre-release ${IMAGE_NAME_FOR_GITHUB}:pre-release
