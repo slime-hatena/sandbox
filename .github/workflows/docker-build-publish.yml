@@ -76,8 +76,10 @@ jobs:
           docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
       - name: Set latest tag
         if: github.event.release.prerelease == false
-        run: |
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
+        run: docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
+      - name: Set pre-release tag
+        if: github.event.release.prerelease == true
+        run: docker tag ${IMAGE_NAME} ${IMAGE_NAME}:pre-release
       - name: (debug) dump image list
         run: docker images | grep ${IMAGE_NAME}
       - name: Login to Docker Hub
@@ -88,8 +90,10 @@ jobs:
           docker push ${IMAGE_NAME}:${TAG}
       - name: Publish latest tag image
         if: github.event.release.prerelease == false
-        run: |
-          docker push ${IMAGE_NAME}:latest
+        run: docker push ${IMAGE_NAME}:latest
+      - name: Publish pre-release tag pre-release
+        if: github.event.release.prerelease == true
+        run: docker push ${IMAGE_NAME}:pre-release
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
         if: cancelled() || failure()
