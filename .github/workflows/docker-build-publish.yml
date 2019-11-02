@@ -106,12 +106,12 @@ jobs:
         if: github.event.release.prerelease == false
         run: |
           docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME_FOR_GITHUB}:latest
-          docker push ${IMAGE_NAME}:latest
+          docker push ${IMAGE_NAME_FOR_GITHUB}:latest
       - name: Publish pre-release tag for GitHub Package Registry
         if: github.event.release.prerelease == true
         run: |
           docker tag ${IMAGE_NAME}:pre-release ${IMAGE_NAME_FOR_GITHUB}:pre-release
-          docker push ${IMAGE_NAME}:pre-release
+          docker push ${IMAGE_NAME_FOR_GITHUB}:pre-release
 
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
