@@ -84,6 +84,9 @@ jobs:
         run: docker images | grep ${IMAGE_NAME}
       - name: Login to Docker Hub
         run: docker login --username slimehatena --password ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Login to GitHub Package Registry
+        run: docker login docker.pkg.github.com --username Slime-hatena --password ${{ GITHUB_TOKEN }}
+
       - name: Publish version tag image
         run: |
           TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
@@ -94,6 +97,22 @@ jobs:
       - name: Publish pre-release tag pre-release
         if: github.event.release.prerelease == true
         run: docker push ${IMAGE_NAME}:pre-release
+      - name: Publish version tag image
+        run: |
+          TAG=`echo $GITHUB_REF | sed 's/refs\/tags\///g'`
+          docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME_FOR_GITHUB}:${TAG}
+          docker push ${IMAGE_NAME_FOR_GITHUB}:${TAG}
+      - name: Publish latest tag image to GitHub Package Registry
+        if: github.event.release.prerelease == false
+        run: |
+          docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME_FOR_GITHUB}:latest
+          docker push ${IMAGE_NAME}:latest
+      - name: Publish pre-release tag pre-release to GitHub Package Registry
+        if: github.event.release.prerelease == true
+        run: |
+          docker tag ${IMAGE_NAME}:pre-release ${IMAGE_NAME_FOR_GITHUB}:pre-release
+          docker push ${IMAGE_NAME}:pre-release
+
       - name: Slack Notification
         uses: 8398a7/action-slack@v2
         if: cancelled() || failure()
@@ -106,6 +125,8 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
       IMAGE_NAME: slimehatena/sandbox
+      IMAGE_NAME_FOR_GITHUB: Slime-hatena/sandbox
+
   slack:
     name: Slack Notification
     runs-on: ubuntu-18.04
