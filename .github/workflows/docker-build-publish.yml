@@ -125,7 +125,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     env:
       IMAGE_NAME: slimehatena/sandbox
-      IMAGE_NAME_FOR_GITHUB: Slime-hatena/sandbox
+      IMAGE_NAME_FOR_GITHUB: docker.pkg.github.com/Slime-hatena/sandbox
 
   slack:
     name: Slack Notification
