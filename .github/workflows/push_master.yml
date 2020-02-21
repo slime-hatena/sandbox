@@ -12,7 +12,6 @@ jobs:
       - name: check
         run: |
           echo ${{ github.sha }}
-          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
