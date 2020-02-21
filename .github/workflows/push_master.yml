@@ -9,13 +9,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+      - name: check
+        run: |
+          echo ${{ github.sha }}
+          docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ACTIONS_RUNNER_DEBUG: true
-          ACTIONS_STEP_DEBUG: true
         with:
           tag_name: ${{ github.sha }}
           release_name: ${{ github.sha }}
