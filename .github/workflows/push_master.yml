@@ -21,8 +21,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{version}}
         with:
-          tag_name: ${{version}}
-          release_name: ${{version}}
+          tag_name: ${{VERSION}}
+          release_name: ${{VERSION}}
           body: |
             Changes in this Release
             - First Change
