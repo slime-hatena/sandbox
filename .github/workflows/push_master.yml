@@ -16,16 +16,18 @@ jobs:
           echo $RANDOM$RANDOM$RANDOM > version.txt
       - shell: bash
         run: |
-          cat version.txt | read version
+          cat version.txt | read VERSION
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: sususususu
-          release_name: Release sususususu
+          tag_name: ${{VERSION}}
+          release_name: Version ${{VERSION}}
           body: |
             Changes in this Release
             - First Change
             - Second Change
           draft: false
           prerelease: false
+      env:
+        VERSION: ""
