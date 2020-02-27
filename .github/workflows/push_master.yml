@@ -14,7 +14,7 @@ jobs:
       - shell: bash
         id: version
         run: |
-          echo ${{github.event.head_commit.message}}
+          git log
       - shell: bash
         id: version
         run: |
