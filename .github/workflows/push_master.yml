@@ -14,6 +14,10 @@ jobs:
       - shell: bash
         id: version
         run: |
+          echo ${{github.event.head_commit.message}}
+      - shell: bash
+        id: version
+        run: |
           echo "::set-output name=body::$RANDOM$RANDOM$RANDOM"
       - uses: actions/create-release@v1
         env:
