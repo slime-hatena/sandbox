@@ -16,7 +16,7 @@ jobs:
           echo $RANDOM$RANDOM$RANDOM > version.txt
       - shell: bash
         run: |
-          cat version.txt | read VERSION
+          VERSION=cat version.txt
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
