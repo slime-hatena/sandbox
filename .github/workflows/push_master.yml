@@ -15,9 +15,6 @@ jobs:
         id: version
         run: |
           echo "::set-output name=body::$RANDOM$RANDOM$RANDOM"
-      - shell: bash
-        run: |
-          VERSION=cat version.txt
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
