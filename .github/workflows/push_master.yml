@@ -12,8 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - shell: bash
+        id: version
         run: |
-          echo $RANDOM$RANDOM$RANDOM > version.txt
+          echo "::set-output name=body::$RANDOM$RANDOM$RANDOM"
       - shell: bash
         run: |
           VERSION=cat version.txt
@@ -21,8 +22,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{VERSION}}
-          release_name: Version ${{VERSION}}
+          tag_name: ${{steps.version.outputs.body}}
+          release_name: Version ${{steps.version.outputs.body}}
           body: |
             Changes in this Release
             - First Change
