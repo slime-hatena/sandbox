@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - shell: bash
-        id: version
         run: |
           git log
       - shell: bash
