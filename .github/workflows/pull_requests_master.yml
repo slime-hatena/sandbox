@@ -12,16 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - shell: bash
-        id: version
-        run: |
-          echo "::set-output name=version::${{github.event.pull_request.title}}"
-      - shell: bash
         id: validate
         run: |
-          VERSION='Release 1.0.0 yay.'
+          VERSION='${{github.event.pull_request.title}}'
           if [[ $VERSION =~ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
             echo "::set-output name=version::${BASH_REMATCH[1]}"
           else
+            exit 1
+          fi
+      - shell: bash
+        run: |
+          grep ${{steps.validate.outputs.version}} $(git tag)
+          if [ $? = 0 ]; then
             exit 1
           fi
       - uses: thollander/actions-comment-pull-request@master
@@ -35,6 +37,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: thollander/actions-comment-pull-request@master
         with:
-          message: Pull requests name is incorrect. Please include `[(\d+\.\d+\.\d+)]`.
+          message: |
+            Failed. The possible causes are as:
+            1) Pull requests name is incorrect. Please include `[(\d+\.\d+\.\d+)]`.
+            2) Tag already exists.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: failure()
