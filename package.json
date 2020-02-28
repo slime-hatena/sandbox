@@ -1,0 +1,11 @@
+{
+  "name": "sandbox",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "ssh://git@github.com/Slime-hatena/sandbox",
+  "author": "Slime-hatena <git@aki-memo.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "lerna-changelog": "^1.0.0"
+  }
+}
