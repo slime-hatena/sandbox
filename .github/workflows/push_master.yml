@@ -29,6 +29,7 @@ jobs:
         id: changelog
         run: |
           git fetch origin
+          git describe --abbrev=0 --tags
           yarn install --production=false
           yarn run changelog
         env:
