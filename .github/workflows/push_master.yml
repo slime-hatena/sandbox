@@ -25,15 +25,17 @@ jobs:
         run: |
           git tag ${{steps.validate.outputs.version}}
           git tag -d ${{steps.validate.outputs.version}}
+      - shell: bash
+        id: changelog
+        run: |
+          NOTE='$(yarn run changelog)'
+          echo "::set-output name=note::$NOTE"
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{steps.validate.outputs.version}}
           release_name: Version ${{steps.validate.outputs.version}}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+          body: ${{steps.changelog.outputs.note}}
           draft: false
           prerelease: false
