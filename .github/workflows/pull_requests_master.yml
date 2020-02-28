@@ -21,11 +21,9 @@ jobs:
             exit 1
           fi
       - shell: bash
+        name: Make tag test.
         run: |
           git tag ${{steps.validate.outputs.version}}
-          if [ $? = 0 ]; then
-            exit 1
-          fi
       - uses: thollander/actions-comment-pull-request@master
         with:
           message: |
