@@ -29,8 +29,9 @@ jobs:
           message: |
             **Merging this request will create release:**  
             Release name: Release ${{steps.validate.outputs.version}}  
-            Tag: `${{steps.validate.outputs.version}}`  
-            Previous release: ?.?.?
+            Tag: `${{steps.validate.outputs.version}}`
+
+            _Don't edit the merge commit message._
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: thollander/actions-comment-pull-request@master
         with:
