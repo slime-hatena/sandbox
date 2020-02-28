@@ -12,7 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - shell: bash
+        id: version
         run: |
-          echo ${{github.event.pull_request.title}}
-    env:
-      VERSION: ""
+          echo "::set-output name=version::${{github.event.pull_request.title}}"
+      - uses: thollander/actions-comment-pull-request@master
+        with:
+          message: '${{steps.version.outputs.version}}'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
