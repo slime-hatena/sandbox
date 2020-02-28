@@ -27,7 +27,7 @@ jobs:
       - uses: thollander/actions-comment-pull-request@master
         with:
           message: |
-            Merging this request will create release:  
+            **Merging this request will create release:**  
             Release name: Release ${{steps.validate.outputs.version}}  
             Tag: `${{steps.validate.outputs.version}}`  
             Previous release: ?.?.?
