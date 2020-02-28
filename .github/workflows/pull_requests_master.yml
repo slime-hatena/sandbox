@@ -1,0 +1,17 @@
+name: 'Pull requests: master'
+
+pull_request:
+  branches:
+    - master
+
+jobs:
+  check_release_name:
+    name: Check release name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - shell: bash
+        run: |
+          echo ${{github.event.pull_request.title}}
+    env:
+      VERSION: ""
