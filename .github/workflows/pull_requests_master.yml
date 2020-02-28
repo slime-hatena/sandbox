@@ -21,9 +21,14 @@ jobs:
           if [[ ${{steps.version.outputs.version}} =~ (\d+\.\d+\.\d+) ]]; then
             echo "::set-output name=version::${BASH_REMATCH[1]}"
           else
-            echo "::set-output name=version::failed"
+            exit 1
           fi
       - uses: thollander/actions-comment-pull-request@master
         with:
-          message: '${{steps.validate.outputs.version}}'
+          message: 'Okay. Merging this pull request creates a ${{steps.validate.outputs.version}} release.'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: thollander/actions-comment-pull-request@master
+        with:
+          message: Pull requests name is incorrect. Specify in [(\d+\.\d+\.\d+)].
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: failure()
