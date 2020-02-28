@@ -31,7 +31,7 @@ jobs:
           yarn install --production=false
           yarn run changelog
         env:
-          GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_AUTH: ${{ secrets.LERNA_CHANGELOG_GITHUB_AUTH }}
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
