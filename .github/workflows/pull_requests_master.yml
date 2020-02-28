@@ -22,7 +22,7 @@ jobs:
           fi
       - shell: bash
         run: |
-          git tag | grep ${{steps.validate.outputs.version}}
+          git tag ${{steps.validate.outputs.version}}
           if [ $? = 0 ]; then
             exit 1
           fi
