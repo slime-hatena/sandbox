@@ -24,6 +24,7 @@ jobs:
         name: Make tag test.
         run: |
           git tag ${{steps.validate.outputs.version}}
+          git tag -d ${{steps.validate.outputs.version}}
       - uses: thollander/actions-comment-pull-request@master
         with:
           message: |
