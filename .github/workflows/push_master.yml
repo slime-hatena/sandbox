@@ -28,7 +28,7 @@ jobs:
       - shell: bash
         id: changelog
         run: |
-          NOTE='$(yarn run changelog)'
+          yarn run changelog | read NOTE
           echo "::set-output name=note::$NOTE"
       - uses: actions/create-release@v1
         env:
