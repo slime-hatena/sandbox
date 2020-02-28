@@ -29,6 +29,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: thollander/actions-comment-pull-request@master
         with:
-          message: Pull requests name is incorrect. Specify in [(\d+\.\d+\.\d+)].
+          message: Pull requests name is incorrect. Include [(\d+\.\d+\.\d+)].
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: failure()
