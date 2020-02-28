@@ -12,6 +12,7 @@
     "changelog": "lerna-changelog"
   },
   "changelog": {
+    "repo": "Slime-hatena/sandbox",
     "labels": {
       "img": "Image",
       "setting": "Setting"
