@@ -28,6 +28,7 @@ jobs:
       - shell: bash
         id: changelog
         run: |
+          git fetch --tags
           yarn install --production=false
           yarn run changelog
         env:
