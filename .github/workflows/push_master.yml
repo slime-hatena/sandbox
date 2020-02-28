@@ -29,7 +29,7 @@ jobs:
         id: changelog
         run: |
           yarn install --production=false
-          yarn run changelog | read NOTE
+          NOTE=$(yarn run changelog)
           echo "::set-output name=note::$NOTE"
         env:
           GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
