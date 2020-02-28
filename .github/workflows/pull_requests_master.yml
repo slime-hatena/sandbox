@@ -26,10 +26,10 @@ jobs:
           fi
       - uses: thollander/actions-comment-pull-request@master
         with:
-          message: 'Okay. Merging this pull request creates a ${{steps.validate.outputs.version}} release.'
+          message: 'Okay. Merging this pull request creates a `${{steps.validate.outputs.version}}` release.'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: thollander/actions-comment-pull-request@master
         with:
-          message: Pull requests name is incorrect. Include [(\d+\.\d+\.\d+)].
+          message: Pull requests name is incorrect. Include `[(\d+\.\d+\.\d+)]`.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: failure()
