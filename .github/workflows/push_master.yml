@@ -28,7 +28,7 @@ jobs:
       - shell: bash
         id: changelog
         run: |
-          yarn install
+          yarn install --production=false
           yarn run changelog | read NOTE
           echo "::set-output name=note::$NOTE"
         env:
