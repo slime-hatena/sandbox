@@ -10,5 +10,11 @@
   },
   "scripts": {
     "changelog": "lerna-changelog"
+  },
+  "changelog": {
+    "labels": {
+      "img": "Image",
+      "setting": "Setting"
+    }
   }
 }
