@@ -12,23 +12,34 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - shell: bash
+        id: validate
         run: |
-          echo ${{github.event.head_commit.message}}
+          VERSION='${{github.event.head_commit.message}}'
+          if [[ $VERSION =~ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            echo "::set-output name=version::${BASH_REMATCH[1]}"
+          else
+            exit 1
+          fi
       - shell: bash
-        id: version
+        name: Make tag test.
         run: |
-          echo "::set-output name=body::$RANDOM$RANDOM$RANDOM"
+          git tag ${{steps.validate.outputs.version}}
+          git tag -d ${{steps.validate.outputs.version}}
+      - shell: bash
+        id: changelog
+        run: |
+          git fetch --tags
+          yarn install --production=false
+          yarn run changelog
+        env:
+          GITHUB_AUTH: ${{ secrets.LERNA_CHANGELOG_GITHUB_AUTH }}
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{steps.version.outputs.body}}
-          release_name: Version ${{steps.version.outputs.body}}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+          tag_name: ${{steps.validate.outputs.version}}
+          release_name: Version ${{steps.validate.outputs.version}}
+          body: "す"
+          # body: ${{steps.changelog.outputs.note}}
           draft: false
           prerelease: false
-    env:
-      VERSION: ""

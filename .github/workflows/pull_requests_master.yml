@@ -1,0 +1,51 @@
+name: 'Pull requests: master'
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check_release_name:
+    name: Check release name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - shell: bash
+        id: validate
+        run: |
+          VERSION='${{github.event.pull_request.title}}'
+          if [[ $VERSION =~ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            echo "::set-output name=version::${BASH_REMATCH[1]}"
+          else
+            exit 1
+          fi
+      - shell: bash
+        name: Make tag test.
+        run: |
+          git tag ${{steps.validate.outputs.version}}
+          git tag -d ${{steps.validate.outputs.version}}
+      - uses: thollander/actions-comment-pull-request@master
+        with:
+          message: |
+            **Merging this request will create release:**  
+            Release name: Release ${{steps.validate.outputs.version}}  
+            Tag: `${{steps.validate.outputs.version}}`
+
+            _Don't edit the merge commit message._
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: thollander/actions-comment-pull-request@master
+        with:
+          message: |
+            Failed. The possible causes are as:
+            1) Pull requests name is incorrect. Please include `[(\d+\.\d+\.\d+)]`.
+            2) Tag already exists.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: failure()
+  labeler:
+    name: Set label
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"

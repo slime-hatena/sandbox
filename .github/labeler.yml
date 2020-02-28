@@ -1,0 +1,4 @@
+img:
+  - dummy/img/**
+setting:
+  - dummy/setting/**
