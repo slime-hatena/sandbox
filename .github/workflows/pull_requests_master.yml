@@ -18,7 +18,7 @@ jobs:
       - shell: bash
         id: validate
         run: |
-          VERSION=${{steps.version.outputs.version}}
+          VERSION='${{steps.version.outputs.version}}'
           if [[ $VERSION =~ (\d+\.\d+\.\d+) ]]; then
             echo "::set-output name=version::${BASH_REMATCH[1]}"
           else
