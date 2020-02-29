@@ -28,7 +28,7 @@ jobs:
       - shell: bash
         id: changelog
         run: |
-          git fetch origin
+          git fetch --prune --unshallow
           yarn install --production=false
           yarn run changelog
         env:
