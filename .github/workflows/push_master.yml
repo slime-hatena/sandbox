@@ -30,7 +30,7 @@ jobs:
         run: |
           git fetch --prune --unshallow
           yarn install --production=false
-          description=$(yarn run --silent changelog --from=1.1.0 | sed -e 's/^## .*$//')
+          description=$(yarn run --silent changelog | sed -e 's/^## .*$//')
           description="${description//'%'/'%25'}"
           description="${description//$'\n'/'%0A'}"
           description="${description//$'\r'/'%0D'}"
