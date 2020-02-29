@@ -31,6 +31,7 @@ jobs:
           git fetch --prune --unshallow
           yarn install --production=false
           BODY=$(yarn run changelog)
+          echo $BODY
           echo "::set-output name=body::${BODY}"
         env:
           GITHUB_AUTH: ${{ secrets.LERNA_CHANGELOG_GITHUB_AUTH }}
