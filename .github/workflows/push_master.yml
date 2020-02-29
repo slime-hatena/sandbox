@@ -30,7 +30,8 @@ jobs:
         run: |
           git fetch --prune --unshallow
           yarn install --production=false
-          yarn run changelog
+          BODY=$(yarn run changelog)
+          echo "::set-output name=body::${BODY}"
         env:
           GITHUB_AUTH: ${{ secrets.LERNA_CHANGELOG_GITHUB_AUTH }}
       - uses: actions/create-release@v1
@@ -39,7 +40,6 @@ jobs:
         with:
           tag_name: ${{steps.validate.outputs.version}}
           release_name: Version ${{steps.validate.outputs.version}}
-          body: "す"
-          # body: ${{steps.changelog.outputs.note}}
+          body: ${{steps.changelog.outputs.body}}
           draft: false
           prerelease: false
