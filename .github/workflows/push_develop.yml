@@ -11,11 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: develop
       - shell: bash
         id: validate
         run: |
           VERSION='${{github.sha}}'
-          echo "::set-output name=version::${VERSION:0:8}"
+          echo "::set-output name=version::${VERSION:0:7}"
       - shell: bash
         name: Make tag test.
         run: |
