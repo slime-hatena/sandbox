@@ -1,0 +1,11 @@
+name: 'Repository initialize'
+on:
+  status
+
+jobs:
+  repository_initialize:
+    name: Repository initialize
+    runs-on: ubuntu-20.04
+    steps:
+      - shell: bash
+        run: echo "Repository initialize"
