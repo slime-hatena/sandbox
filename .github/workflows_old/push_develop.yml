@@ -1,0 +1,46 @@
+name: 'push: develop'
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
+      - shell: bash
+        id: validate
+        run: |
+          VERSION='${{github.sha}}'
+          echo "::set-output name=version::${VERSION:0:7}"
+      - shell: bash
+        name: Make tag test.
+        run: |
+          git tag ${{steps.validate.outputs.version}}
+          git tag -d ${{steps.validate.outputs.version}}
+      - shell: bash
+        id: changelog
+        run: |
+          git fetch --prune --unshallow
+          yarn install --production=false
+          description=$(yarn run --silent changelog | sed -e 's/^## .*$//')
+          description="${description//'%'/'%25'}"
+          description="${description//$'\n'/'%0A'}"
+          description="${description//$'\r'/'%0D'}"
+          echo "::set-output name=body::${description}"
+        env:
+          GITHUB_AUTH: ${{ secrets.LERNA_CHANGELOG_GITHUB_AUTH }}
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{steps.validate.outputs.version}}
+          release_name: Version ${{steps.validate.outputs.version}}
+          body: ${{steps.changelog.outputs.body}}
+          draft: false
+          prerelease: true
